@@ -1,9 +1,18 @@
-package util;
+package ru.anatoliy.adblogger.util;
 
-import java.io.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class LogParser {
-    public static String findExeption(String path)   {
+    private static final Logger logger = LoggerFactory.getLogger(LogParser.class);
+
+    public static String findException(String path) {
+        logger.debug("Start parsing file {} ", path);
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(path), "utf-8"))) {
             String strLine;
             String ex = null;
@@ -11,8 +20,8 @@ public class LogParser {
 
             while ((strLine = reader.readLine()) != null) {
                 if (strLine.contains("FATAL EXCEPTION")) {
+                    logger.debug("Exception found at {}", strLine);
                     ex = strLine.substring(0, 43);
-                    System.out.println("0-43 ______________ " + strLine.substring(0, 43));
                 }
 
                 if (ex != null && strLine.contains(ex)) {
@@ -21,15 +30,16 @@ public class LogParser {
                     buffer.append("\n\n");
                     ex = null;
                 }
-
             }
 
             if (buffer.length() == 0) {
-                return "FATAL EXEPTION not found.";
+                logger.debug("Exception not founded {}", path);
+                return "FATAL EXCEPTION not found.";
             } else {
                 return buffer.toString();
             }
         } catch (IOException e) {
+            logger.error("Error in parse file - {} ", path, e);
             e.printStackTrace();
         }
 

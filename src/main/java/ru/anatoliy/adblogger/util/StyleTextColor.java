@@ -1,4 +1,4 @@
-package util;
+package ru.anatoliy.adblogger.util;
 
 public class StyleTextColor {
     public static final String RED = "-fx-text-fill: red;";
